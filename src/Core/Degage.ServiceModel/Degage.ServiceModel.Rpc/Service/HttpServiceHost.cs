@@ -226,9 +226,9 @@ namespace Degage.ServiceModel.Rpc
         }
 
         //interface  //处理调用
-        protected virtual ReturnPacketInternal InvokeHandler(Object instance, InvokePacket packet, InvokeImplementOperationInfo operationInfo)
+        protected virtual ReturnPacket InvokeHandler(Object instance, InvokePacket packet, InvokeImplementOperationInfo operationInfo)
         {
-            ReturnPacketInternal returnPacket = new ReturnPacketInternal();
+            ReturnPacket returnPacket = new ReturnPacket();
             Object returnObject = null;
             try
             {

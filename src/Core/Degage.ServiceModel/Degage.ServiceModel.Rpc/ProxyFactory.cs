@@ -5,9 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Linq.Expressions;
 using System.Reflection;
-#if !NETSTANDRAD2_0
 using System.Reflection.Emit;
-#endif
 using System.Threading;
 using System.Collections.Concurrent;
 using System.Collections;
@@ -23,9 +21,9 @@ namespace Degage.ServiceModel.Rpc
         ///Key 为接口类型，Value 为动态创建的代理类的对象的委托 
         /// </summary>
         private static ConcurrentDictionary<Type, Func<IInvokeHandler, Type, Object>> _InterfaceProxyDelegateTable;
-#if !NETSTANDRAD2_0
+
         private static readonly Dictionary<Type, OpCode> _TypeLdOpCodeTable;
-#endif
+
         private static Object _SyncObject;
 
         ///// <summary>
@@ -64,7 +62,7 @@ namespace Degage.ServiceModel.Rpc
             _InterfaceProxyTypeTable = new ConcurrentDictionary<Type, Type>();
             _SyncObject = new Object();
             _InterfaceProxyDelegateTable = new ConcurrentDictionary<Type, Func<IInvokeHandler, Type, Object>>();
-#if !NETSTANDRAD2_0
+
             _TypeLdOpCodeTable = new Dictionary<Type, OpCode>();
 
 
@@ -76,7 +74,7 @@ namespace Degage.ServiceModel.Rpc
             _TypeLdOpCodeTable.Add(typeof(System.Single), OpCodes.Ldind_R4);
             _TypeLdOpCodeTable.Add(typeof(System.UInt16), OpCodes.Ldind_U2);
             _TypeLdOpCodeTable.Add(typeof(System.UInt32), OpCodes.Ldind_U4);
-#endif
+
 
         }
 
@@ -138,7 +136,7 @@ namespace Degage.ServiceModel.Rpc
 #if NET40
             NewExpression newSerializerExp = Expression.New(serializerType);
             serializerFactory = Expression.Lambda<Func<ITransferSerializer>>(newSerializerExp).Compile();          
-#elif NETSTANDRAD2_0
+#else
             serializerFactory = () =>
               {
                   return (ITransferSerializer)Activator.CreateInstance(serializerType);
@@ -152,7 +150,7 @@ namespace Degage.ServiceModel.Rpc
 #if NET40
             NewExpression newTransmitterExp = Expression.New(transmitterType);
             transmitterFactory = Expression.Lambda<Func<ITransmitter>>(newTransmitterExp).Compile();
-#elif NETSTANDRAD2_0
+#else
             transmitterFactory = () =>
             {
                 return (ITransmitter)Activator.CreateInstance(transmitterType);
@@ -168,7 +166,7 @@ namespace Degage.ServiceModel.Rpc
         public Object CreateProxy(Type interfaceType)
         {
             Object proxy = null;
-            Start:
+        Start:
             Func<IInvokeHandler, Type, Object> proxyFunc = GetProxyCreateDelegate(interfaceType);
             if (proxyFunc == null)
             {
@@ -297,7 +295,7 @@ namespace Degage.ServiceModel.Rpc
         }
 #endif
         #endregion
-#if !NETSTANDRAD2_0
+
         /// <summary>
         /// 为指定接口动态创建代理类型
         /// </summary>
@@ -324,14 +322,14 @@ namespace Degage.ServiceModel.Rpc
             AssemblyName assemblyNameObj = new AssemblyName(assemblyName);
             assemblyNameObj.Version = new Version(1, 0, 0, 0);
             assemblyNameObj.CultureInfo = null;
-#if NETSTANDARD2_0
-            AssemblyBuilder assemblyBuilder = AssemblyBuilder.DefineDynamicAssembly(
-                assemblyNameObj,
-                AssemblyBuilderAccess.RunAndCollect);
-#else
+#if NET40
             AssemblyBuilder assemblyBuilder = domain.DefineDynamicAssembly(
                assemblyNameObj,
                AssemblyBuilderAccess.RunAndCollect);
+#else
+            AssemblyBuilder assemblyBuilder = AssemblyBuilder.DefineDynamicAssembly(
+             assemblyNameObj,
+             AssemblyBuilderAccess.RunAndCollect);
 #endif
             //在程序集中构建基本模块
             ModuleBuilder moduleBuilder = assemblyBuilder.DefineDynamicModule(moudleName);
@@ -387,15 +385,14 @@ namespace Degage.ServiceModel.Rpc
             DynamicallyCreateProxyTypeMethod(interfaceType, typeBuilder, handlerField, interfaceTypeField);
             DynamicallyCreateProxyTypeMethod(typeof(IDisposable), typeBuilder, handlerField, interfaceTypeField);
 
-#if NETSTANDARD2_0
-            return typeBuilder.CreateTypeInfo();
-
+#if NET40
+               return typeBuilder.CreateType();
 #else
-            return typeBuilder.CreateType();
+            return typeBuilder.CreateTypeInfo();
 #endif
         }
-#endif
-#if !NETSTANDRAD2_0
+
+
         private static void DynamicallyCreateProxyTypeMethod(Type interfaceType,
             TypeBuilder proxyTypeBuilder,
             FieldBuilder handlerField,
@@ -509,7 +506,7 @@ namespace Degage.ServiceModel.Rpc
                 }
 
                 //调用 InovkeHandle 方法
-                iLGenerator.Emit(OpCodes.Call, handleMethodInfo);
+                iLGenerator.Emit(OpCodes.Callvirt, handleMethodInfo);
                 //Object InovkeHandle(Object proxy, Type interfaceType, MethodInfo interfaceInvokeMethod, Object[] parameters);
 
                 if (!methodInfo.ReturnType.Equals(typeof(void)))
@@ -551,6 +548,6 @@ namespace Degage.ServiceModel.Rpc
             }
 
         }
-#endif
+
     }
 }

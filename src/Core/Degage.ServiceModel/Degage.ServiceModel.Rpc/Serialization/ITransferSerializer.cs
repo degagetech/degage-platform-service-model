@@ -40,14 +40,14 @@ namespace Degage.ServiceModel.Rpc
         InvokePacket DeSerializeToInvokePacket(ITransportableObject tranObj);
 
         /// <summary>
-        /// 将指定的 <see cref="ReturnPacketInternal "/> 对象序列化为可传输对象
+        /// 将指定的 <see cref="ReturnPacket "/> 对象序列化为可传输对象
         /// </summary>
-        ITransportableObject SerializeReturnPacket(ReturnPacketInternal  returnPacket);
+        ITransportableObject SerializeReturnPacket(ReturnPacket  returnPacket);
 
         /// <summary>
-        /// 将指定的可传输对象反序列化为 <see cref="ReturnPacketInternal "/> 对象
+        /// 将指定的可传输对象反序列化为 <see cref="ReturnPacket "/> 对象
         /// </summary>
-        ReturnPacketInternal  DeSerializeToReturnPacket(ITransportableObject tranObj);
+        ReturnPacket  DeSerializeToReturnPacket(ITransportableObject tranObj);
 
     }
 }

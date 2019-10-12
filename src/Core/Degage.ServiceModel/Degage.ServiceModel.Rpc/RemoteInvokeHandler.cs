@@ -41,7 +41,7 @@ namespace Degage.ServiceModel.Rpc
                 Debug.WriteLine("SerializeInvokePacket Start Time: " + DateTime.Now.ToString("ss:fff"));
                 var invokeTransportableObject = this.Serializer.SerializeInvokePacket(invokePacket);
                 Debug.WriteLine("SerializeInvokePacket End Time: " + DateTime.Now.ToString("ss:fff"));
-#elif !SerializePerformance
+#else
                 var invokeTransportableObject = this.Serializer.SerializeInvokePacket(invokePacket);
 #endif
                 var returnTransportableObject = this.Serializer.CreateTransportable();
@@ -55,7 +55,7 @@ namespace Degage.ServiceModel.Rpc
                     var returnPacket = this.Serializer.DeSerializeToReturnPacket(returnTransportableObject);
                     result = returnPacket.Content;
                     Debug.WriteLine("DeSerialize Return Packet End Time: " + DateTime.Now.ToString("ss:fff"));
-#elif !SerializePerformance
+#else
                     var returnPacket = this.Serializer.DeSerializeToReturnPacket(returnTransportableObject);
                     result = returnPacket.Content;
 #endif

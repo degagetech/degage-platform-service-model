@@ -5,7 +5,7 @@ using System.Text;
 
 namespace Degage.ServiceModel.Rpc
 {
-    public class ReturnPacketInternal :BasePacket
+    public class ReturnPacket :BasePacket
     {
 
         /// <summary>

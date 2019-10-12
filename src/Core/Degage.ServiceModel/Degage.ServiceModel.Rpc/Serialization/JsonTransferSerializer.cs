@@ -87,7 +87,7 @@ namespace Degage.ServiceModel.Rpc
             return packet;
         }
 
-        public ITransportableObject SerializeReturnPacket(ReturnPacketInternal returnPacket)
+        public ITransportableObject SerializeReturnPacket(ReturnPacket returnPacket)
         {
             JsonTransportable transportable = null;
             var jsonData = JsonConvert.SerializeObject(returnPacket, _Settings);
@@ -95,28 +95,28 @@ namespace Degage.ServiceModel.Rpc
             return transportable;
         }
 
-        public ReturnPacketInternal DeSerializeToReturnPacket(ITransportableObject tranObj)
+        public ReturnPacket DeSerializeToReturnPacket(ITransportableObject tranObj)
         {
-            ReturnPacketInternal packet = null;
+            ReturnPacket packet = null;
             var jsonTranObj = tranObj as JsonTransportable;
             var jsonString = jsonTranObj.JsonString;
             if (jsonString == null) return packet;
             JsonSerializer serializer = JsonSerializer.Create(_Settings);
             JObject jObject = JObject.Parse(jsonString);
 
-            var jtoken = jObject.GetValue(nameof(ReturnPacketInternal.Content));
+            var jtoken = jObject.GetValue(nameof(ReturnPacket.Content));
             //如果返回参数不为空
             if (jtoken != null)
             {
-                jObject.Remove(nameof(ReturnPacketInternal.Content));
-                packet = jObject.ToObject<ReturnPacketInternal>(serializer);
+                jObject.Remove(nameof(ReturnPacket.Content));
+                packet = jObject.ToObject<ReturnPacket>(serializer);
 
                 Type contentType = Utilities.GetType(packet.ContentType, true);
                 packet.Content = jtoken.ToObject(contentType, serializer);
             }
             else
             {
-                packet = packet = jObject.ToObject<ReturnPacketInternal>(serializer);
+                packet = packet = jObject.ToObject<ReturnPacket>(serializer);
             }
 
             return packet;

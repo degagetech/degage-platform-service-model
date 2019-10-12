@@ -1,0 +1,24 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>netcoreapp3.0</TargetFramework>
+    <Configurations>Debug;Release</Configurations>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+    <PlatformTarget>AnyCPU</PlatformTarget>
+  </PropertyGroup>
+  
+
+
+  <ItemGroup>
+    <Compile Include="..\Degage.ServiceModel.Rpc.Example.Server\ConsoleHelper.cs" Link="ConsoleHelper.cs" />
+    <Compile Include="..\Degage.ServiceModel.Rpc.Example.Server\IExampleService.cs" Link="IExampleService.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Degage.ServiceModel.Rpc\Degage.ServiceModel.Rpc.csproj" />
+  </ItemGroup>
+
+</Project>
